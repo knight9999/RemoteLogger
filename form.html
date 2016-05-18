@@ -1,0 +1,96 @@
+<html>
+<head>
+<title>Logger Form</title>
+<script>
+  function doSubmit(form) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      switch(xhr.readyState) {
+      case 4:
+        if (xhr.status == 0) {
+          alert("Fail");
+        } else {
+          if ((200 <= xhr.status && xhr.status < 300) || (xhr.status == 304)) {
+            console.log("Send OK");
+            refresh(); 
+         } else {
+            alert("Code = " + xhr.status);
+          }
+        }
+        break;
+      }
+    }
+    var url = "logger.php";
+    xhr.open("POST",url);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    console.log( form.message.value );
+    xhr.send("message=" + encodeURIComponent( form.message.value ) ); 
+  }
+
+  function refresh() {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      switch(xhr.readyState) {
+      case 4:
+        if (xhr.status == 0) {
+          alert("Fail");
+        } else {
+          if ((200 <= xhr.status && xhr.status < 300) || (xhr.status == 304)) {
+            var element = document.getElementById("data");
+            element.innerHTML = xhr.responseText;            
+          } else {
+            alert("Code = " + xhr.status);
+          }
+        }
+        break;
+      }
+    }
+    var url = "getLog.php";
+    xhr.open("GET",url);
+    xhr.send(); 
+ 
+  }
+
+  function clearLog() {
+
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      switch(xhr.readyState) {
+      case 4:
+        if (xhr.status == 0) {
+          alert("Fail");
+        } else {
+          if ((200 <= xhr.status && xhr.status < 300) || (xhr.status == 304)) {
+            console.log("Clear OK");
+            refresh();
+          } else {
+            alert("Code = " + xhr.status);
+          }
+        }
+        break;
+      }
+    }
+    var url = "clearLog.php";
+    xhr.open("GET",url);
+    xhr.send(); 
+ 
+  }
+  window.addEventListener("load", refresh , false);
+</script>
+</head>
+<body>
+  <form action="logger.php" method="POST" onsubmit="doSubmit(this); return false;">
+    <input type="text" name="message" />
+    <br />
+    <input type="submit" value="Send" />
+  </form>
+
+  <input type="button" value="Clear" onclick="clearLog(); return false;"/>
+<div>log data</div>
+
+<pre id="data">
+</pre>
+
+</body>
+</html>
+
